@@ -31,10 +31,13 @@ export function replaceMath(text) {
                 parseFloat(n1) * parseFloat(n2)
             }</span>`;
         }
-        else if (op === "/" && parseFloat(n2) !== 0) {
+        else if (op === "/" && parseFloat(n2)) {
             return `<span class="mathEquation">${
                 parseFloat(n1) / parseFloat(n2)
             }</span>`;
+        }
+        else{
+            return str;
         }
     });
 }
