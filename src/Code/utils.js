@@ -1,11 +1,16 @@
+/**
+ * Gets an array of unique tags from all the items in the itemList
+ * @param {*} itemList
+ */
 export function getAllTags(itemList) {
     const allTags = itemList.map((i) => i.tags).flat();
     const list = [...new Set(allTags)];
     return list;
 }
 /**
- * Replaces simple mathimatical equations (addition or subtraction) with the calculated sum
- * Places the results in an html span with a class to alloow formatting.
+ * Replaces simple mathematical equations (addition or subtraction) with the calculated sum
+ * Places the results in an html span with a class to allow styling.
+ * NOTE: styling elemnt will only work because we are allowing html tags in the "text" field.
  * @param {string} text
  */
 export function replaceMath(text) {
