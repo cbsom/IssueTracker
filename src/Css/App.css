@@ -1,0 +1,57 @@
+.app {
+}
+.app-header {
+    background-color: #000;
+    color: #888;
+    padding: 1vw;
+    margin: 0;
+}
+.app-content {
+    padding: 2vw;
+}
+.cardView {
+    margin-bottom: 1vh;
+    background-color: #f1f1f1;
+}
+.cardViewFooter {
+    display: flex;
+    justify-content: space-between;
+}
+.cardViewFooter div {
+    display: inline-block;
+}
+.cardEdit {
+    margin-bottom: 1vh;
+    background-color: #d1d1d1;
+}
+.badge {
+    margin: 10px;
+    padding: 10px;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+.badge- {
+    background-color: #678876;
+}
+.badge-comment {
+    background-color: #666;
+}
+.badge-bug {
+    background-color: #922;
+}
+.badge-issue {
+    background-color: #f60;
+    color: #000;
+}
+.tagListCombo {
+    display: inline-block;
+    margin-left: 2vh;
+}
+.rw-multiselect .rw-widget-container {
+    padding-bottom: 10px;
+}
+.mathEquation {
+    background-color:#ac8;
+    padding:1px 7px;
+    border-radius: 4px;
+}
