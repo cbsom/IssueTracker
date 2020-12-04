@@ -15,7 +15,7 @@ export function getAllTags(itemList) {
  */
 export function replaceMath(text) {
     // eslint-disable-next-line no-useless-escape
-    const regex = /([\d\.]+) *([\+\-]) *([\d\.])/g;
+    const regex = /([\d\.]+) *([\+\-]) *([\d\.]+)/g;
     return text.replace(regex, (str, n1, op, n2) => {
         if (op === "+") {
             return `<span class="mathEquation">${
@@ -24,6 +24,16 @@ export function replaceMath(text) {
         } else if (op === "-") {
             return `<span class="mathEquation">${
                 parseFloat(n1) - parseFloat(n2)
+            }</span>`;
+        }
+        else if (op === "*") {
+            return `<span class="mathEquation">${
+                parseFloat(n1) * parseFloat(n2)
+            }</span>`;
+        }
+        else if (op === "/" && parseFloat(n2) !== 0) {
+            return `<span class="mathEquation">${
+                parseFloat(n1) / parseFloat(n2)
             }</span>`;
         }
     });

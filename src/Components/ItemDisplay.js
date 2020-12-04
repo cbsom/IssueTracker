@@ -80,7 +80,7 @@ function ItemEdit({ item, onEndEdit, onRemove }) {
                             placeholder="Enter your comment here..."
                         />
                         <Form.Text className="text-muted">
-                            Enter your comment. Html tags are acceptable. Simple mathamatical equations will be replaced with thier sum.
+                            Enter your comment. Html tags are acceptable. Simple mathamatical equations (+, -, *, /) will be replaced with their sum.
                         </Form.Text>
                     </Form.Group>
                     <Form.Group controlId="formBasicEmail">
