@@ -17,27 +17,23 @@ export function replaceMath(text) {
     // eslint-disable-next-line no-useless-escape
     const regex = /([\d\.]+) *([\+\-\*\/]) *([\d\.]+)/g;
     return text.replace(regex, (str, n1, op, n2) => {
-        if (op === "+") {
-            return `<span class="mathEquation">${
-                parseFloat(n1) + parseFloat(n2)
-            }</span>`;
-        } else if (op === "-") {
-            return `<span class="mathEquation">${
-                parseFloat(n1) - parseFloat(n2)
-            }</span>`;
-        }
-        else if (op === "*") {
-            return `<span class="mathEquation">${
-                parseFloat(n1) * parseFloat(n2)
-            }</span>`;
-        }
-        else if (op === "/" && parseFloat(n2)) {
-            return `<span class="mathEquation">${
-                parseFloat(n1) / parseFloat(n2)
-            }</span>`;
-        }
-        else{
+        const num1 = parseFloat(n1),
+            num2 = parseFloat(n2);
+        if (isNaN(num1) || isNaN(num2) || (op === "/" && n2 === 0)) {
             return str;
         }
+        let sum;
+        if (op === "+") {
+            sum = num1 + num2;
+        } else if (op === "-") {
+            sum = num1 - num2;
+        } else if (op === "*") {
+            sum = num1 * num2;
+        } else if (op === "/" && parseFloat(n2)) {
+            sum = num1 / num2;
+        } else {
+            return str;
+        }
+        return `<span class="mathEquation">${sum}</span>`;
     });
 }
