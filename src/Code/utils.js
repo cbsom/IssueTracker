@@ -8,19 +8,33 @@ export function getAllTags(itemList) {
     return list;
 }
 /**
- * Replaces simple mathematical equations (addition or subtraction) with the calculated sum
+ * Replaces simple mathematical equations with the calculated sum.
+ * Also handles negative numbers and floating point numbers.
+ * No parenthases are allowed within the equation.
  * Places the results in an html span with a class to allow styling.
  * NOTE: styling elemnt will only work because we are allowing html tags in the "text" field.
  * @param {string} text
  */
 export function replaceMath(text) {
+    /*The regex looks for all instances of:
+        1. a space or an opening parethases character
+        2. an optional minus sign
+        3. a valid integer - 085 is also OK
+        4. an optional decimal point followed by at least one valid number.
+        5. an optional space
+        6. a mathematical operator +, - ,* or /
+        7. an optional space
+        8. another number in the exact same format as steps 2 - 4
+    */
     // eslint-disable-next-line no-useless-escape
-    const regex = /([\d\.]+) *([\+\-\*\/]) *([\d\.]+)/g;
-    return text.replace(regex, (str, n1, op, n2) => {
-        const num1 = parseFloat(n1),
-            num2 = parseFloat(n2);
-        if (isNaN(num1) || isNaN(num2) || (op === "/" && n2 === 0)) {
-            return str;
+    const regex = /[ \()](-?(0|[1-9]\d*)(\.\d+)?) *([\+\-\*\/]) *(-?(0|[1-9]\d*)(\.\d+)?)/g;
+    return text.replace(regex, function () {
+        const orig = arguments[0],
+            num1 = parseFloat(arguments[1]),
+            num2 = parseFloat(arguments[6]),
+            op = arguments[4];
+        if (isNaN(num1) || isNaN(num2) || (op === "/" && num2 === 0)) {
+            return orig;
         }
         let sum;
         if (op === "+") {
@@ -29,11 +43,17 @@ export function replaceMath(text) {
             sum = num1 - num2;
         } else if (op === "*") {
             sum = num1 * num2;
-        } else if (op === "/" && parseFloat(n2)) {
+        } else if (op === "/") {
             sum = num1 / num2;
         } else {
-            return str;
+            return orig;
         }
-        return `<span class="mathEquation">${sum}</span>`;
+        //To avoid javascripts imprecision nonsense with floating point numbers,
+        //we only return until the hundreths spot after the decimal.
+        //Because we converted to floats and the sum may be an int,
+        //we remove any "".00" at the end.
+        sum = sum.toFixed(2).replace(/[.,]00$/, "");
+
+        return ` <span class="mathEquation">${sum}</span>`;
     });
 }
