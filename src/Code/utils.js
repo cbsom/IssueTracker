@@ -28,11 +28,11 @@ export function replaceMath(text) {
     */
     // eslint-disable-next-line no-useless-escape
     const regex = /[ \()](-?(0|[1-9]\d*)(\.\d+)?) *([\+\-\*\/]) *(-?(0|[1-9]\d*)(\.\d+)?)/g;
-    return text.replace(regex, function () {
-        const orig = arguments[0],
-            num1 = parseFloat(arguments[1]),
-            num2 = parseFloat(arguments[6]),
-            op = arguments[4];
+    return text.replace(regex, function (...args) {
+        const orig = args[0],
+            num1 = parseFloat(args[1]),
+            num2 = parseFloat(args[6]),
+            op = args[4];
         if (isNaN(num1) || isNaN(num2) || (op === "/" && num2 === 0)) {
             return orig;
         }
