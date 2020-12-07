@@ -6,8 +6,7 @@ import axios from "axios";
  */
 export function getNewItem(itemList) {
     //find the maximum id in the list
-    const ids = itemList.map((i) => i.id);
-    const maxId = Math.max.apply(Math, ids);
+    const maxId = Math.max(...itemList.map((i) => i.id));
     const newItem = { id: maxId + 1, title: "", text: "", tags: [] };
     return newItem;
 }
