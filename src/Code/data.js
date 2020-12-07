@@ -15,7 +15,7 @@ export function getNewItem(itemList) {
 /**
  * @returns {[id:number, title:string, text:string, tags:[string]]}
  */
-export async function getInitalData() {
+export async function getInitialData() {
     try {
         //Sh... Don't tell anyone that we are using mock static data
         const response = await axios.get("/initialData.json");

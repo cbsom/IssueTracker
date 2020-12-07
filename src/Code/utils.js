@@ -17,24 +17,24 @@ export function getAllTags(itemList) {
  */
 export function replaceMath(text) {
     /*The regex looks for all instances of:
-        1. a space or an opening parethases character
+        1. the beginning of a "word" - no letter characters right before the number
         2. an optional minus sign
         3. a valid integer - 085 is also OK
         4. an optional decimal point followed by at least one valid number.
-        5. an optional space
+        5. optional whitespace
         6. a mathematical operator +, - ,* or /
-        7. an optional space
+        7. optional whitespace
         8. another number in the exact same format as steps 2 - 4
     */
     // eslint-disable-next-line no-useless-escape
-    const regex = /[ \()](-?(0|[1-9]\d*)(\.\d+)?) *([\+\-\*\/]) *(-?(0|[1-9]\d*)(\.\d+)?)/g;
+    const regex = /\b(-?(0|[1-9]\d*)(\.\d+)?)\s*([\+\-\*\/])\s*(-?(0|[1-9]\d*)(\.\d+)?)/g;
     return text.replace(regex, function (...args) {
-        const orig = args[0],
+        const originalString = args[0],
             num1 = parseFloat(args[1]),
             num2 = parseFloat(args[6]),
             op = args[4];
         if (isNaN(num1) || isNaN(num2) || (op === "/" && num2 === 0)) {
-            return orig;
+            return originalString;
         }
         let sum;
         if (op === "+") {
@@ -46,7 +46,7 @@ export function replaceMath(text) {
         } else if (op === "/") {
             sum = num1 / num2;
         } else {
-            return orig;
+            return originalString;
         }
         //To avoid javascripts imprecision nonsense with floating point numbers,
         //we only return until the hundreths spot after the decimal.

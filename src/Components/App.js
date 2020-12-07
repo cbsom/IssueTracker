@@ -6,7 +6,7 @@ import { getNewItem } from "../Code/data.js";
 import Filter from "./Filter.js";
 import "../Css/App.css";
 
-function App() {
+export default function App() {
     const [state] = useItemList();
     const [filterTags, setFilterTags] = useState();
     //Get a filtered list of items to show - according to the filterTags
@@ -37,5 +37,3 @@ function App() {
         </div>
     );
 }
-
-export default App;
