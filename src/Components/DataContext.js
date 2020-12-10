@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, createContext, useContext, useReducer } from "react";
 import { getInitialData } from "../Code/data";
 import { itemListReducer } from "../Code/itemListReducer";
 
@@ -8,11 +8,11 @@ import { itemListReducer } from "../Code/itemListReducer";
  * For convenience, they are combined into a single component - ItemListProvider.
  * The state and dispatch are combined into a single custom hook "useItemList".
  * *******************************************************************************/
-const ItemListStateContext = React.createContext();
-const ItemListDispatchContext = React.createContext();
+const ItemListStateContext = createContext();
+const ItemListDispatchContext = createContext();
 
 function ItemListProvider({ children }) {
-    const [state, dispatch] = React.useReducer(itemListReducer, {
+    const [state, dispatch] = useReducer(itemListReducer, {
         itemList: [],
     });
 
@@ -37,8 +37,8 @@ function ItemListProvider({ children }) {
 
 function useItemList() {
     return [
-        React.useContext(ItemListStateContext),
-        React.useContext(ItemListDispatchContext),
+        useContext(ItemListStateContext),
+        useContext(ItemListDispatchContext),
     ];
 }
 

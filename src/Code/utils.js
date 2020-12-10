@@ -1,59 +1,92 @@
+// eslint-disable-next-line no-useless-escape
+const replaceRegex = /\b(~~~~~)*(-?(0|[1-9]\d*)(\.\d+)?)(\\~~~~~)*\s*([\+\-\*\/])\s*(-?(0|[1-9]\d*)(\.\d+)?)/g;
+const removePlaceholdersRegex = /(~~~~~)+(-?(0|[1-9]\d*)(\.\d+)?)(\\~~~~~)+/g;
+
 /**
- * Gets an array of unique tags from all the items in the itemList
- * @param {*} itemList
+ * This function is called as the "replacer" function from a String.replace call.
+ * Replaces a matched equation with the sum - surrounded by a "placeholder". .
+ * @param  {[string]} args this comes from the replace function itself - each arg is a group in the match
  */
-export function getAllTags(itemList) {
-    const allTags = itemList.map((i) => i.tags).flat();
-    const list = [...new Set(allTags)];
-    return list;
-}
-/**
- * Replaces simple mathematical equations with the calculated sum.
- * Also handles negative numbers and floating point numbers.
- * No parenthases are allowed within the equation.
- * Places the results in an html span with a class to allow styling.
- * NOTE: styling elemnt will only work because we are allowing html tags in the "text" field.
- * @param {string} text
- */
-export function replaceMath(text) {
-    /*The regex looks for all instances of:
-        1. the beginning of a "word" - no letter characters right before the number
-        2. an optional minus sign
-        3. a valid integer - 085 is also OK
-        4. an optional decimal point followed by at least one valid number.
-        5. optional whitespace
-        6. a mathematical operator +, - ,* or /
-        7. optional whitespace
-        8. another number in the exact same format as steps 2 - 4
-    */
-    // eslint-disable-next-line no-useless-escape
-    const regex = /\b(-?(0|[1-9]\d*)(\.\d+)?)\s*([\+\-\*\/])\s*(-?(0|[1-9]\d*)(\.\d+)?)/g;
-    return text.replace(regex, function (...args) {
-        const originalString = args[0],
-            num1 = parseFloat(args[1]),
-            num2 = parseFloat(args[6]),
-            op = args[4];
-        if (isNaN(num1) || isNaN(num2) || (op === "/" && num2 === 0)) {
-            return originalString;
-        }
-        let sum;
-        if (op === "+") {
+function doReplace(...args) {
+    const originalString = args[0],
+        num1 = parseFloat(args[2]),
+        num2 = parseFloat(args[7]),
+        op = args[6];
+    if (isNaN(num1) || isNaN(num2) || (op === "/" && num2 === 0)) {
+        return originalString;
+    }
+    let sum;
+    switch (op) {
+        case "+":
             sum = num1 + num2;
-        } else if (op === "-") {
+            break;
+        case "-":
             sum = num1 - num2;
-        } else if (op === "*") {
+            break;
+        case "*":
             sum = num1 * num2;
-        } else if (op === "/") {
+            break;
+        case "/":
             sum = num1 / num2;
-        } else {
+            break;
+        default:
             return originalString;
-        }
+    }
+    //Replace the equation with the sum number -
+    //surrounded by a temporary "mark" to identify where the replacements occurred at the end.
+    //This is to allow us afterwards to surround the sum text with an html span.
+    return `~~~~~${sum}\\~~~~~`;
+}
+
+/**
+ * This function is also called as the "replacer" function from a String.replace call.
+ * It is called after all the replacements are done on each single final sum - which are identified
+ * by the placeholders inserted by the doReplace function.
+ * This function replaces the placeholders with an html span with a class to allow formatting.
+ * @param  {[string]} args this comes from the replace function itself - each arg is a group in the match
+ */
+function fixPlaceholders(...args) {
+    const num = parseFloat(args[2]);
+    if (!isNaN(num)) {
         //To avoid javascripts imprecision nonsense with floating point numbers,
         //we only return until the hundreths spot after the decimal.
         //Because we converted to floats and the sum may be an int,
         //we remove any "".00" at the end.
-        sum = sum.toFixed(2).replace(/[.,]00$/, "");
-
-        return ` <span class="mathEquation">${sum}</span>`;
-    });
+        return ` <span class="mathEquation">${num
+            .toFixed(2)
+            .replace(/[.,]00$/, "")}</span>`;
+    } else {
+        return args[0];
+    }
 }
+
+/**
+ * Gets an array of unique tags from all the items in the itemList
+ * @param {*} itemList
+ */
+function getAllTags(itemList) {
+    const allTags = itemList.map((i) => i.tags).flat();
+    const list = [...new Set(allTags)];
+    return list;
+}
+
+/**
+ * Replaces simple mathematical equations with the calculated sum.
+ * Also handles negative numbers and floating point numbers.
+ * No parentheses are allowed within the equation.
+ * Places the results in an html span with a class to allow styling.
+ * NOTE: styling element will only work because we are allowing html tags in the "text" field.
+ * @param {string} text
+ */
+function replaceMath(text) {
+    while (true) {
+        const replacement = text.replace(replaceRegex, doReplace);
+        //If the original text was not changed by the replace call, there are no more equations to process.
+        if (replacement === text) {
+            return text.replace(removePlaceholdersRegex, fixPlaceholders);
+        }
+        text = replacement;
+    }
+}
+
+export { getAllTags, replaceMath };
