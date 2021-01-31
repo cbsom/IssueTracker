@@ -1,6 +1,6 @@
 # Sample Comment System
 
-A project created by Chaim Bainish Sommers for the Viventium recruiting process.
+Simple issue tracker.
 
 Uses React, react-bootstrap and react-widgets.
 
